@@ -13,14 +13,13 @@ rect {
 }
 
 svg {
-  background-color: blue;
+  background-color: lightblue;
   position: absolute;
   top:0;
   left:0;
 }
 
-circle{
+circle {
 	fill: blue;
 	stroke: black;
-	radius: 30;
 }
