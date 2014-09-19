@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=utf-8>
+<title>d3.transition.ease()</title>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <h2>d3.transition().ease("<span id="easeId"></span>")</h2>
+    <button class="easing" id="sine">
+    Sine
+    </button>
+    <button class="easing" id="elastic">
+    Elastic
+    </button>
+    <button class="easing" id="linear">
+    Linear
+    </button>
+    <button class="easing" id="quad">
+    Quad
+    </button>
+    <button class="easing" id="cubic">
+    Cubic
+    </button>
+    <button class="easing" id="bounce">
+    Bounce
+    </button>
+    <br />
+    <span>Number of circles</span>
+    <input type="range" id="circleNum" min="10" max="300" value="150">
+ 
+<script>
+    var h = window.innerHeight - 100,
+        w = window.innerWidth - 100,
+        offset = 2;
+ 
+    svg = d3.select('body').append('svg')
+      .attr('height', h)
+      .attr('width', w);
+ 
+    colors = d3.scale.category20c();
+ 
+    circleg = svg.append('g')
+ 
+    change = 1
+ 
+    function redraw() {
+        var n = d3.select('#circleNum').property('value');
+ 
+        circleGroups = circleg.selectAll('.circleGroup')
+            .data(d3.range(n));
+ 
+        circleGroups.exit().remove();
+ 
+        circleEnter = circleGroups.enter().append('g')
+            .attr('class', 'circleGroup')
+ 
+        circleEnter.append('circle')
+            .attr({
+                class: 'circles',
+                cx: function (d, i) { return i * offset; },
+                cy: 20,
+                r: 10
+            })
+            .style('stroke', function(d, i) { return colors(i); })
+ 
+        if (change < h) {
+            change += 100
+        } else {
+            change = 1;
+        }
+ 
+        t = circleg.selectAll('circle')
+            .transition().duration(2400)
+                .ease(ease)
+                .delay(function (d, i) {return i * 25; })
+                .attr({
+                    cx: function (d, i) { return i * offset; },
+                    cy: h - 100 - change
+                });
+ 
+        t1 = t.transition()
+                .attr({
+                    cx: function (d, i) { return w - i * offset; },
+                    cy: 20 + change
+                });
+    }
+ 
+    var ease = 'sine';
+    d3.select('#easeId').html(ease);
+ 
+    d3.selectAll('.easing')
+        .on('click', function (d) {
+            var t = this.id;
+            ease = t;
+            redraw(t)
+            d3.select('#easeId').html(ease)
+        });
+ 
+    d3.select('#circleNum').on('change', redraw);
+    redraw(ease);
+ 
+    setInterval(function() {
+        console.log(ease)
+        redraw(ease);
+    }, 4800);
+ 
+</script>
+</body>
+</html>
